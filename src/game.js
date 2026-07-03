@@ -6,7 +6,7 @@ const TICK_MS = 100;
 // mapping can't also corrupt the snake's default/initial direction.
 const DIRECTIONS = {
   ArrowUp: { x: 0, y: -1 },
-  Down: { x: 0, y: 1 },
+  ArrowDown: { x: 0, y: 1 },
   ArrowLeft: { x: -1, y: 0 },
   ArrowRight: { x: 1, y: 0 },
 };
