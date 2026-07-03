@@ -8,6 +8,8 @@ def run_cmd(cmd: str, cwd: str) -> dict:
             cwd=cwd,
             shell=True,
             text=True,
+            encoding="utf-8",
+            errors="replace",
             capture_output=True,
         )
     except OSError as exc:
