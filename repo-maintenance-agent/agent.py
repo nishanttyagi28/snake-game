@@ -59,8 +59,16 @@ def _repo_full_name(repo_url):
 
 
 def _fingerprint(cmd, stdout, stderr):
-    first_line = next((line for line in (stderr or stdout or "").splitlines() if line.strip()), "")
-    digest = hashlib.sha256(f"{cmd}::{first_line}".encode("utf-8")).hexdigest()[:12]
+    combined = f"{stdout or ''}\n{stderr or ''}"
+    lines = [line.strip() for line in combined.splitlines() if line.strip()]
+    # Prefer a line that looks like an actual error/assertion message over a
+    # generic header line -- e.g. Playwright's list reporter always starts
+    # with "Running N tests using N workers" regardless of which test
+    # failed or why, which would otherwise collide two unrelated failures
+    # of the same command into the same fingerprint (and the same issue).
+    signal_line = next((line for line in lines if "error" in line.lower()), None)
+    basis_line = signal_line or (lines[0] if lines else "")
+    digest = hashlib.sha256(f"{cmd}::{basis_line}".encode("utf-8")).hexdigest()[:12]
     return digest
 
 

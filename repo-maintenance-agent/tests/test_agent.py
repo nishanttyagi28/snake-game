@@ -39,6 +39,49 @@ def _result(cmd="fake-check", code=0, stdout="", stderr=""):
     return {"cmd": cmd, "code": code, "stdout": stdout, "stderr": stderr}
 
 
+# Real (trimmed) Playwright "list" reporter output from two genuinely
+# different failures -- both start with the same generic header line.
+PLAYWRIGHT_OUTPUT_BUG_1 = """\
+Running 6 tests using 6 workers
+
+  x  5 tests\\snake.spec.js:59:1 › 4. score increases after eating food (4.1s)
+
+    Error: expect(received).toBeGreaterThan(expected)
+
+    Expected: > 0
+    Received:   0
+"""
+
+PLAYWRIGHT_OUTPUT_BUG_2 = """\
+Running 6 tests using 6 workers
+
+  x  4 tests\\snake.spec.js:71:1 › 6. restart button resets the game (5.9s)
+
+    Error: expect(locator).toContainText(expected) failed
+
+    Locator: locator('#score')
+    Expected substring: "0"
+    Received string:    "1"
+"""
+
+
+def test_fingerprint_distinguishes_different_failures_of_the_same_command():
+    fp1 = agent._fingerprint("npx playwright test", PLAYWRIGHT_OUTPUT_BUG_1, "")
+    fp2 = agent._fingerprint("npx playwright test", PLAYWRIGHT_OUTPUT_BUG_2, "")
+    assert fp1 != fp2
+
+
+def test_fingerprint_is_stable_for_the_same_failure():
+    fp1 = agent._fingerprint("npx playwright test", PLAYWRIGHT_OUTPUT_BUG_1, "")
+    fp2 = agent._fingerprint("npx playwright test", PLAYWRIGHT_OUTPUT_BUG_1, "")
+    assert fp1 == fp2
+
+
+def test_fingerprint_falls_back_to_first_line_when_no_error_keyword():
+    fp = agent._fingerprint("echo hi", "just plain output\nmore output", "")
+    assert fp == agent._fingerprint("echo hi", "just plain output\nsomething else", "")
+
+
 @pytest.fixture(autouse=True)
 def env(monkeypatch):
     monkeypatch.setenv("GITHUB_TOKEN", "fake-gh-token")
