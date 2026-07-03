@@ -48,7 +48,7 @@ class SnakeGame {
     ];
     this.direction = INITIAL_DIRECTION;
     this.pendingDirection = INITIAL_DIRECTION;
-    // this.score = 0;
+    this.score = 0;
     this.gameOver = false;
     this.food = randomEmptyCell(this.snake);
 
