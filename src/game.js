@@ -36,6 +36,7 @@ class SnakeGame {
     this.scoreEl = scoreEl;
     this.gameOverEl = gameOverEl;
     this.intervalId = null;
+    this.score = 0; // explicit initial value so a broken reset() (see seeded-bugs/bug-2-restart.md) only affects actual restarts, not first load
     this.reset();
   }
 
@@ -47,7 +48,7 @@ class SnakeGame {
     ];
     this.direction = INITIAL_DIRECTION;
     this.pendingDirection = INITIAL_DIRECTION;
-    this.score = 0;
+    // this.score = 0;
     this.gameOver = false;
     this.food = randomEmptyCell(this.snake);
 
