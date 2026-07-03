@@ -1,0 +1,9 @@
+repo_url: "https://github.com/nishanttyagi28/snake-game"
+local_path: "./work/snake-game"
+branch_prefix: "agent-maintenance"
+max_fix_attempts: 3
+checks:
+  - "npm install"
+  - "npm test"
+  - "npm run lint"
+  - "npx playwright test"
