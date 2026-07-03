@@ -99,7 +99,7 @@ class SnakeGame {
     this.snake.unshift(newHead);
 
     if (ateFood) {
-      this.score += 1;
+      this.score = this.score;
       this.scoreEl.textContent = String(this.score);
       this.food = randomEmptyCell(this.snake);
     } else {
